@@ -23,6 +23,7 @@
 				<li>3、改变屏幕尺寸，图形自动重绘</li>
 				<li>4、横向滚动条(默认靠右)</li>
 				<li>5、下载图片的工具</li>
+				<li>6、显示和隐藏loading效果</li>
 			</ul>
 		</div>
 		<div class="container">  
@@ -163,7 +164,15 @@
 	                top: 0,
 				}]
 			});
+			myChart.showLoading({
+		        text: '数据获取中',
+		        effect: 'whirling'
+		    });
+			
+			myChart.showLoading();
+			setTimeout(function(){
+				myChart.hideLoading();
+			},3000)
 		}
 	</script>
-
 </html>
