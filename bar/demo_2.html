@@ -6,6 +6,8 @@
 		<title>ECharts</title>
 		<script src="../js/echarts.min.js"></script>
 		<script type="text/javascript" src="../js/jquery.1.11.3.min.js"></script>
+		<script type="text/javascript" src="../theme/macarons.js" ></script>
+		<script type="text/javascript" src="../theme/shine.js" ></script>
 		<style type="text/css">
 			.container {  
 				width: 100%;
@@ -18,13 +20,15 @@
 		<div style="font-size">
 			<p>需求：</p>
 			<ul>
-				<li>1、横坐标倾斜；</li>
-				<li>2、顶部显示数值；</li>
-				<li>3、改变屏幕尺寸，图形自动重绘</li>
-				<li>4、横向滚动条(默认靠右)</li>
-				<li>5、下载图片的工具</li>
-				<li>6、显示和隐藏loading效果</li>
+				<li>1、主题切换；</li>
 			</ul>
+		</div>
+		<div>
+			<select class="triggerEcharts">
+				<option value="">-请选择-</option>
+				<option value="macarons">macarons</option>
+				<option value="shine">shine</option>
+			</select>
 		</div>
 		<div class="container">  
 			<div id="mainBar" style="width: 600px;height:600px;margin: 0 auto;"></div>
@@ -33,28 +37,10 @@
 	<script type="text/javascript">
 		var width;
 		var height;
-		var myChart;
-		$(function() {
-			//自适应设置  
-			width = $(window).width();
-			height = $(window).height();
-			$("#mainBar").css("width", width/2);
-			$("#mainBar").css("height", height/2);
-			setEcharts();
-		});
-
-		$(window).resize(function() {
-			width = $(window).width();
-			height = $(window).height();
-			$("#mainBar").css("width", width/2);
-			$("#mainBar").css("height", height/2);
-		});
-
-		function setEcharts(){  
-			myChart = echarts.init(document.getElementById('mainBar'),'macarons');
-			//自适应 
-			window.onresize = myChart.resize;
-			myChart.setOption({
+		var myChart;  
+		
+		
+		var option = {
 				tooltip: {
 					trigger: 'axis'
 				},
@@ -154,7 +140,6 @@
 				],
 				dataZoom:[{
 					type: 'slider',
-					// type: 'inside'
 	                show: true,
 	                realtime: false, 
 	                y: 36,
@@ -164,7 +149,30 @@
 	                right: 0,
 	                top: 0,
 				}]
-			});
+			}
+		
+		$(function() {
+			//自适应设置  
+			width = $(window).width();
+			height = $(window).height();
+			$("#mainBar").css("width", width/2);
+			$("#mainBar").css("height", height/2);
+			setEcharts(option);
+		});
+
+		$(window).resize(function() {
+			width = $(window).width();
+			height = $(window).height();
+			$("#mainBar").css("width", width/2);
+			$("#mainBar").css("height", height/2);
+		});
+		
+		
+		function setEcharts(option){  
+			myChart = echarts.init(document.getElementById('mainBar'),'macarons');
+			//自适应 
+			window.onresize = myChart.resize;
+			myChart.setOption(option);
 			myChart.showLoading({
 		        text: '数据获取中',
 		        effect: 'whirling'
@@ -175,5 +183,21 @@
 				myChart.hideLoading();
 			},3000)
 		}
+		
+		/**
+		 * 	监听select事件
+		 * */
+		$(".triggerEcharts").change(function(e) {
+				try {
+					//	echarts.getInstanceByDom()  获取 dom 容器上的实例,dispose 销毁实例，销毁后实例无法再被使用。
+					echarts.getInstanceByDom($('#mainBar').find('div')[0]).dispose();//
+				} catch(ex) {}
+				let theme = $(this).val();  
+				//	等DOM渲染出来的后再初始化
+				setTimeout(function() {
+					var brokenChart = echarts.init($('#mainBar').find('div')[0], theme);
+					brokenChart.setOption(option);
+				}, 500);
+			})
 	</script> 
 </html>
